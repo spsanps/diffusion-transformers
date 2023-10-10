@@ -2,3 +2,13 @@ data/*
 results/*
 saved_models/*
 wandb/*
+*APIKEY*
+*KEY*
+
+# cache
+__pycache__/*
+*.pyc
+
+# logs
+logs/*
+prompt_logs/*

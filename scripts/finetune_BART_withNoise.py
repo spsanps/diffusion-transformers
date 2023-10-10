@@ -2,14 +2,14 @@ import torch
 import wandb
 from torch.utils.data import DataLoader
 from transformers import BartTokenizer, Trainer, TrainingArguments
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 
 from custom_BARTs.noise_encoder_BART import BartForConditionalGeneration, BartConfig
 
 
 # Experiment and Project names
-exp_name = "summary_with_noise_working_p1_45"
-project_name = "finetune_BART_with_noise"
+exp_name = "summary_with_noise_working_p1_45_one_sentence_128"
+project_name = "finetune_BART_with_noise_one_sentence_128"
 
 # Initialize wandb
 wandb.init(project=project_name, name=exp_name)
@@ -18,7 +18,8 @@ wandb.init(project=project_name, name=exp_name)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load dataset
-dataset = load_dataset("kmfoda/booksum")
+dataset = load_from_disk("data/booksum_one_sentence_dataset")
+                       #load_dataset("kmfoda/booksum")
 train_dataset = dataset['train']
 
 # Initialize BART model and tokenizer
@@ -30,7 +31,7 @@ model = BartForConditionalGeneration.from_pretrained('facebook/bart-base', confi
 
 # Tokenize the 'summary_text' field
 def tokenize_data(example):
-    encoded_summary = tokenizer.encode(example['summary_text'], truncation=True, padding='max_length', max_length=1024)
+    encoded_summary = tokenizer.encode(example['one_sentence_summary'], truncation=True, padding='max_length', max_length=128)
     return {
         'labels': encoded_summary,
         'input_ids': encoded_summary,  # Dummy input_ids
